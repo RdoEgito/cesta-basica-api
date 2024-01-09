@@ -31,13 +31,21 @@ const connection = mongoose.createConnection('mongodb+srv://test:kwBe5Tn5FNs4Xes
 const db = connection.useDb('cesta_basica');
 
 // Definição do esquema do documento
-const itemSchema = new mongoose.Schema({
+const ItemSchema = new mongoose.Schema({
   item: String,
   quantidadeNecessaria: Number
 });
 
+const ItemDonatedSchema = new mongoose.Schema({
+  key: String,
+  quantidade: Number,
+  nome: String
+});
+
+
 // Modelo para a collection 'items_para_doacao'
-const Item = db.model('Item', itemSchema, 'items_para_doacao');
+const Item = db.model('Item', ItemSchema, 'items_para_doacao');
+const ItemDonated = db.model('ItemDonated', ItemDonatedSchema, 'items_doados');
 
 // Rota GET para obter dados do MongoDB
 app.get('/api/items', async (req, res) => {
@@ -47,6 +55,25 @@ app.get('/api/items', async (req, res) => {
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+app.post('/api/items-donated', async (req, res) => {
+  const { key, quantity, name } = req.body;
+
+  try {
+    const novoDocumento = new ItemDonated({
+      key: key,
+      quantidade: quantity,
+      nome: name
+    });
+
+    await novoDocumento.save();
+    console.log('Dados enviados para o MongoDB com sucesso!');
+    res.status(201).json({ message: 'Dados salvos com sucesso no MongoDB' });
+  } catch (error) {
+    console.error('Erro ao enviar dados para o MongoDB:', error);
+    res.status(500).json({ error: 'Erro ao salvar dados no MongoDB' });
   }
 });
 
