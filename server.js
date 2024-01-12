@@ -62,13 +62,35 @@ app.post('/api/items-donated', async (req, res) => {
   const { key, quantity, name } = req.body;
 
   try {
-    const novoDocumento = new ItemDonated({
+    const itemKey = key;
+    const documentId = Item.findOne(itemKey, '_id', (err, foundDocument) => {
+      if (err) {
+        console.error(err);
+      } else {
+        if (foundDocument) {
+          console.log('ID do primeiro documento encontrado:', foundDocument._id);
+        } else {
+          console.log('Nenhum documento encontrado para o item de pesquisa fornecido.');
+        }
+      }});
+
+    const itemDonated = new ItemDonated({
       key: key,
       quantidade: quantity,
       nome: name
     });
 
-    await novoDocumento.save();
+    Item.updateOne(
+      { _id: documentId },
+      { $set: { quantidadeDoada: quantity }},
+      (err, result) => {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log('Documento atualizado com sucesso:', result);
+        }});
+
+    await itemDonated.save();
     console.log('Dados enviados para o MongoDB com sucesso!');
     res.status(201).json({ message: 'Dados salvos com sucesso no MongoDB' });
   } catch (error) {
