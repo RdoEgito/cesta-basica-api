@@ -33,7 +33,9 @@ const db = connection.useDb('cesta_basica');
 // Definição do esquema do documento
 const ItemSchema = new mongoose.Schema({
   item: String,
-  quantidadeNecessaria: Number
+  quantidadeNecessaria: Number,
+  quantidadeDoada: Number,
+  key: String
 });
 
 const ItemDonatedSchema = new mongoose.Schema({
@@ -62,14 +64,6 @@ app.post('/api/items-donated', async (req, res) => {
   const { key, quantity, name } = req.body;
 
   try {
-    const itemKey = key;
-    const itemToDonate = Item.findOne({ itemKey });
-
-    if (itemToDonate) {
-      itemToDonate.quantidadeDoada += quantity;
-      await itemToDonate.save();
-    }
-
     const itemDonated = new ItemDonated({
       key: key,
       quantidade: quantity,
@@ -77,6 +71,30 @@ app.post('/api/items-donated', async (req, res) => {
     });
 
     await itemDonated.save();
+    console.log('Dados enviados para o MongoDB com sucesso!');
+    res.status(201).json({ message: 'Dados salvos com sucesso no MongoDB' });
+  } catch (error) {
+    console.error('Erro ao enviar dados para o MongoDB:', error);
+    res.status(500).json({ error: 'Erro ao salvar dados no MongoDB' });
+  }
+});
+
+app.post('/api/items-to-donate', async (req, res) => {
+  const { key, quantity } = req.body;
+
+  try {
+    const itemKey = key;
+    const itemToDonate = await Item.findOne({ key: itemKey });
+
+    if (itemToDonate) {
+      itemToDonate.quantidadeDoada += quantity;
+      console.log("itemToDonate", parseInt(quantity), itemToDonate);
+      await itemToDonate.save();
+    }
+
+    console.log(await Item.findOne({ key: itemKey }));
+
+    await itemToDonate.save();
     console.log('Dados enviados para o MongoDB com sucesso!');
     res.status(201).json({ message: 'Dados salvos com sucesso no MongoDB' });
   } catch (error) {
