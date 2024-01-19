@@ -7,7 +7,7 @@ app.use(express.json())
 app.use(cors());
 
 // Conexão com o MongoDB
-const connection = mongoose.createConnection('process.env.MONGO_CS');
+const connection = mongoose.createConnection(process.env.MONGO_CS);
 const db = connection.useDb('cesta_basica');
 
 // Definição do esquema do documento
