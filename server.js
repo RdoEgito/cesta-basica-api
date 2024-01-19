@@ -40,6 +40,16 @@ app.get('/api/items', async (req, res) => {
   }
 });
 
+app.get('/api/donated-items', async (req, res) => {
+  try {
+    const items = await ItemDonated.find();
+    items.sort(compare)
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 app.post('/api/items-donated', async (req, res) => {
   const { key, quantity, name } = req.body;
 
