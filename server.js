@@ -1,23 +1,3 @@
-// const express = require('express');
-// const app = express();
-
-// // Rota de exemplo
-// app.get('/', (req, res) => {
-//   res.json({ message: 'Olá! Bem-vindo à minha API.' });
-// });
-
-// // Rota com parâmetros
-// app.get('/hello/:name', (req, res) => {
-//   const { name } = req.params;
-//   res.json({ message: `Olá, ${name}!` });
-// });
-
-// // Configuração da porta do servidor
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`Servidor rodando na porta ${PORT}`);
-// });
-
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -27,7 +7,7 @@ app.use(express.json())
 app.use(cors());
 
 // Conexão com o MongoDB
-const connection = mongoose.createConnection('mongodb+srv://test:kwBe5Tn5FNs4XesI@cluster0.zj1tsoh.mongodb.net/?retryWrites=true&w=majority');
+const connection = mongoose.createConnection('process.env.MONGO_CS');
 const db = connection.useDb('cesta_basica');
 
 // Definição do esquema do documento
