@@ -90,9 +90,11 @@ app.post('/api/items-to-donate', async (req, res) => {
   }
 });
 
-app.patch('/api/reset-donations', async (req, res) => {
+app.put('/api/reset-donations', async (req, res) => {
   try {
-    ItemDonated.updateMany({}, { $set: { quantidade: 0 } });
+    Item.updateMany({}, { $set: { quantidadeDoada: 0 } })
+    ItemDonated.deleteMany();
+
     res.status(204).json({ message: 'Quantidade atualizada com sucesso.' });
   } catch (error) {
     console.error('Erro ao atualizar quantidade:', error);
