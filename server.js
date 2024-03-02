@@ -25,11 +25,9 @@ const ItemDonatedSchema = new mongoose.Schema({
 });
 
 
-// Modelo para a collection 'items_para_doacao'
 const Item = db.model('Item', ItemSchema, 'items_para_doacao');
 const ItemDonated = db.model('ItemDonated', ItemDonatedSchema, 'items_doados');
 
-// Rota GET para obter dados do MongoDB
 app.get('/api/items', async (req, res) => {
   try {
     const items = await Item.find();
@@ -89,6 +87,16 @@ app.post('/api/items-to-donate', async (req, res) => {
   } catch (error) {
     console.error('Erro ao enviar dados para o MongoDB:', error);
     res.status(500).json({ error: 'Erro ao salvar dados no MongoDB' });
+  }
+});
+
+app.patch('/api/reset-donations', async (req, res) => {
+  try {
+    ItemDonated.updateMany({}, { $set: { quantidade: 0 } });
+    res.status(204).json({ message: 'Quantidade atualizada com sucesso.' });
+  } catch (error) {
+    console.error('Erro ao atualizar quantidade:', error);
+    res.status(500).json({ error: 'Erro ao atualizar quantidade.' });
   }
 });
 
