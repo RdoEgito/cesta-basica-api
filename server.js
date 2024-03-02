@@ -24,7 +24,6 @@ const ItemDonatedSchema = new mongoose.Schema({
   nome: String
 });
 
-
 const Item = db.model('Item', ItemSchema, 'items_para_doacao');
 const ItemDonated = db.model('ItemDonated', ItemDonatedSchema, 'items_doados');
 
@@ -92,8 +91,8 @@ app.post('/api/items-to-donate', async (req, res) => {
 
 app.put('/api/reset-donations', async (req, res) => {
   try {
-    Item.updateMany({}, { $set: { quantidadeDoada: 0 } })
-    ItemDonated.deleteMany();
+    await Item.updateMany({}, { $set: { quantidadeDoada: 0 } })
+    await ItemDonated.deleteMany();
 
     res.status(204).json({ message: 'Quantidade atualizada com sucesso.' });
   } catch (error) {
